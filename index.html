@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roleplay Assistant</title>
     <style>
-        /* Liquid Glass Design Tokens */
         :root {
             --glass-bg: rgba(255, 255, 255, 0.06);
             --glass-bg-hover: rgba(255, 255, 255, 0.12);
@@ -27,8 +26,8 @@
         }
 
         body {
-            /* Loads your uploaded repository image */
-            background: url('Background for WB.webp') no-repeat center center fixed;
+            /* Charcoal fallback color + your background image */
+            background: #1a1a1a url('Background for WB.webp') no-repeat center center fixed;
             background-size: cover;
             display: flex;
             flex-direction: column;
@@ -38,7 +37,6 @@
             gap: 16px;
         }
 
-        /* Glassmorphism Panel Base style */
         .glass-panel {
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
@@ -47,7 +45,6 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         }
 
-        /* Top Header */
         header {
             display: flex;
             justify-content: space-between;
@@ -61,12 +58,6 @@
             align-items: center;
         }
 
-        /* Shortened, Arrowless Timezone Select */
-        .tz-wrapper {
-            position: relative;
-            display: inline-block;
-        }
-
         select {
             background: transparent;
             border: 1px solid var(--glass-border);
@@ -76,10 +67,10 @@
             font-size: 13px;
             font-weight: 500;
             text-align: center;
-            appearance: none; /* Removes native arrow */
+            appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
-            width: 75px; /* Keeps it short */
+            width: 75px;
         }
 
         select:hover {
@@ -93,7 +84,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* Main Workspace Layout */
         .workspace {
             display: flex;
             flex: 1;
@@ -101,7 +91,6 @@
             overflow: hidden;
         }
 
-        /* Left Sidebar Nav */
         nav {
             width: 260px;
             border-radius: var(--radius);
@@ -170,7 +159,6 @@
             font-weight: 600;
         }
 
-        /* Content Display Window */
         main {
             flex: 1;
             border-radius: var(--radius);
@@ -184,7 +172,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* Formatting elements inside the main display */
         .content-line {
             margin-bottom: 6px;
             white-space: pre-wrap;
@@ -214,15 +201,13 @@
     <header class="glass-panel">
         <div id="clock">Loading Time...</div>
         <div class="controls">
-            <div class="tz-wrapper">
-                <select id="timezone-select">
-                    <option value="local">LOC</option>
-                    <option value="UTC">UTC</option>
-                    <option value="America/New_York">EST</option>
-                    <option value="America/Los_Angeles">PST</option>
-                    <option value="Europe/London">GMT</option>
-                </select>
-            </div>
+            <select id="timezone-select">
+                <option value="local">LOC</option>
+                <option value="UTC">UTC</option>
+                <option value="America/New_York">EST</option>
+                <option value="America/Los_Angeles">PST</option>
+                <option value="Europe/London">GMT</option>
+            </select>
         </div>
     </header>
 
@@ -233,8 +218,7 @@
                 <button id="btn-Fire" onclick="switchMainPage('Fire')">Fire</button>
                 <button id="btn-LEO" onclick="switchMainPage('LEO')">LEO</button>
             </div>
-            <ul class="sub-nav-list" id="sub-nav-container">
-                </ul>
+            <ul class="sub-nav-list" id="sub-nav-container"></ul>
         </nav>
 
         <main class="glass-panel">
@@ -244,10 +228,6 @@
     </div>
 
     <script>
-        // --- EASY TO EDIT CONFIGURATION ---
-        // Rules:
-        // 1. A line containing ONLY '---' creates a clean glass divider line.
-        // 2. A line starting with '### ' immediately following a divider creates a subheading.
         const siteConfig = {
             EMS: {
                 "Equipment": "• Jump Bag\n• Defibrillator (AED)\n---\n### Optional Items\n• Portable Oxygen\n• Stretcher & Cervical Collars",
@@ -269,7 +249,6 @@
         let currentMain = 'EMS';
         let currentTimezone = 'local';
 
-        // --- CLOCK CONFIGURATION ---
         function updateClock() {
             const now = new Date();
             const options = {
@@ -277,11 +256,7 @@
                 hour: '2-digit', minute: '2-digit', second: '2-digit',
                 hour12: false
             };
-            
-            if (currentTimezone !== 'local') {
-                options.timeZone = currentTimezone;
-            }
-
+            if (currentTimezone !== 'local') options.timeZone = currentTimezone;
             document.getElementById('clock').innerText = new Intl.DateTimeFormat('en-US', options).format(now);
         }
         setInterval(updateClock, 1000);
@@ -292,36 +267,27 @@
             updateClock();
         });
 
-        // --- PAGE ROUTING & DOM PARSING LOGIC ---
         function switchMainPage(category) {
             currentMain = category;
-            
             ['EMS', 'Fire', 'LEO'].forEach(cat => {
                 document.getElementById(`btn-${cat}`).classList.toggle('active', cat === category);
             });
-
             renderSubNav();
         }
 
         function renderSubNav() {
             const container = document.getElementById('sub-nav-container');
             container.innerHTML = ''; 
-            
             const subpages = Object.keys(siteConfig[currentMain]);
-            
             subpages.forEach((subpage, index) => {
                 const li = document.createElement('li');
                 const btn = document.createElement('button');
                 btn.className = 'sub-nav-item';
                 btn.innerText = subpage;
                 btn.onclick = () => displayContent(subpage);
-                
                 li.appendChild(btn);
                 container.appendChild(li);
-
-                if (index === 0) {
-                    displayContent(subpage);
-                }
+                if (index === 0) displayContent(subpage);
             });
         }
 
@@ -330,36 +296,28 @@
                 btn.classList.toggle('active', btn.innerText === subpageKey);
             });
 
-            // Set Title text
             document.getElementById('content-title').innerText = `${currentMain} - ${subpageKey}`;
-            
             const rawText = siteConfig[currentMain][subpageKey];
             const contentBody = document.getElementById('content-body');
             contentBody.innerHTML = ''; 
 
-            // Feature 1: Always inject a default divider right below the main panel header
             const defaultHr = document.createElement('hr');
             defaultHr.className = 'content-divider';
             contentBody.appendChild(defaultHr);
 
-            // Process text block line by line
             const lines = rawText.split('\n');
             lines.forEach(line => {
                 const trimmed = line.trim();
-                
                 if (trimmed === '---') {
-                    // Feature 2: Standard Divider implementation
                     const hr = document.createElement('hr');
                     hr.className = 'content-divider';
                     contentBody.appendChild(hr);
                 } else if (trimmed.startsWith('### ')) {
-                    // Feature 3: Subheading implementation
                     const subHeading = document.createElement('div');
                     subHeading.className = 'content-subheading';
                     subHeading.innerText = trimmed.replace('### ', '');
                     contentBody.appendChild(subHeading);
                 } else {
-                    // Normal text line
                     const div = document.createElement('div');
                     div.className = 'content-line';
                     div.innerText = line;
@@ -367,8 +325,6 @@
                 }
             });
         }
-
-        // Initialize App
         switchMainPage('EMS');
     </script>
 </body>
