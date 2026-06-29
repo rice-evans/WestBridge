@@ -183,4 +183,151 @@
 
         .content-subheading {
             font-size: 18px;
-            font
+            font-weight: 600;
+            margin-top: 16px;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+        
+        .content-divider {
+            border: 0;
+            border-top: 1px solid var(--glass-border);
+            margin: 22px 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="glass-panel">
+        <div id="clock">Loading Time...</div>
+        <div class="controls">
+            <select id="timezone-select">
+                <option value="local">LOC</option>
+                <option value="UTC">UTC</option>
+                <option value="America/New_York">EST</option>
+                <option value="America/Los_Angeles">PST</option>
+                <option value="Europe/London">GMT</option>
+            </select>
+        </div>
+    </header>
+
+    <div class="workspace">
+        <nav class="glass-panel">
+            <div class="main-cats">
+                <button id="btn-EMS" onclick="switchMainPage('EMS')">EMS</button>
+                <button id="btn-Fire" onclick="switchMainPage('Fire')">Fire</button>
+                <button id="btn-LEO" onclick="switchMainPage('LEO')">LEO</button>
+            </div>
+            <ul class="sub-nav-list" id="sub-nav-container"></ul>
+        </nav>
+
+        <main class="glass-panel">
+            <h1 id="content-title">Welcome</h1>
+            <div id="content-body">Select a department and subpage to begin.</div>
+        </main>
+    </div>
+
+    <script>
+        const siteConfig = {
+            EMS: {
+                "Equipment": "**LUCAS Machine**\n<span style='color: #ff4d4d; font-weight: 700;'>MUST NOT BE USED ON PEDIATRIC PATIENTS</span>\nDelivers consistent, high quality chest compressions during cardiac arrest.\n---\n**SAM Splint**\nMalleable aluminum splint for stabilizing fractures and joint injuries.\n---\n**Philips HeartStart Intrepid**\nProvides defibrillation, pacing, and advanced cardiac monitoring in cardiac emergencies.\n---\n**ROYAX Splint**\nRigid splint used for immobilizing long-bone fractures, often with adjustable features.\n---\n**Nasal Cannulas**\nDelivers low-flow oxygen for patients with mild respiratory distress or hypoxia.\n---\n**RISE Splint**\n*(Good for Wilderness Medicine)*\nCombines Rigid, Immobilizing, Stabilizing Elements for extremity injuries; very lightweight.\n---\n**BVM + NRB**\nProvides assisted ventilation and high-concentration oxygen for apneic or hypoventilating patients.\n---\n**CRAMER Vacuum Splint**\nConforms to the limb when air is evacuated, providing custom rigid immobilization for fractures.\n---\n**HALO Chest Seals**\nUsed to treat open chest wounds (sucking chest wounds) to prevent tension pneumothorax.\n---\n**Pressure Bandage**\nControls moderate to severe external bleeding through direct pressure.\n---\n**SPEAR Needles**\nUsed for needle decompression in suspected tension pneumothorax.\n---\n**Packing Gauze (Incl. Hemostatic)**\nUsed for wound packing in junctional or deep bleeding sites, promoting clotting.\n---\n**I-Gel Advanced Airway**\nSupraglottic airway device for emergency airway management without the need for intubation.\n---\n**CAT Tourniquets**\n<span style='color: #ff4d4d; font-weight: 700;'>MUST NOT BE USED ON HEAD, NECK OR TORSO.</span>\nControls life-threatening extremity hemorrhage when direct pressure fails.\n---\n**Rapid Sequence Intubation Kit**\nFacilitates secure airway placement in critically ill patients using sedatives and paralytics.\n---\n**IV Kit (16g -18g)**\nEstablishes intravenous access for fluid resuscitation, medication, or blood product delivery.\n---\n**Cricothyrotomy Kit**\n<span style='color: #ff4d4d; font-weight: 700;'>MUST NOT BE USED ON PEDIATRIC PATIENTS</span>\nEstablishes a surgical airway in \"can’t intubate, can’t oxygenate\" scenarios.\n---\n**Kendrick Extrication Device**\nStabilizes the spine and torso during extraction of seated trauma patients, especially in MVAs.\n---\n**Nasopharyngeal Airway**\nMaintains airway patency in semi-conscious patients with intact gag reflex.\n---\n**Scoop + Backboard + Collar**\nProvides spinal motion restriction for trauma patients during transport.",
+                "Bleeding Control": "1. Apply direct pressure with sterile dressing.\n2. If bleeding continues, apply a tourniquet high and tight.\n---\n### Deep Trauma Instructions\n3. Pack deep wounds with hemostatic gauze.\n4. Keep patient warm and monitor for shock.",
+                "Dosages": "• Epinephrine (1:1,000): 0.3mg IM for Anaphylaxis\n• Naloxone (Narcan): 2mg Intranasal for Opioid Overdose\n---\n### Cardiac & Respiratory\n• Aspirin: 324mg chewed for Chest Pain\n• Albuterol: 2.5mg via Nebulizer for Asthma"
+            },
+            Fire: {
+                "Equipment": "• Halligan Bar & Axe\n• SCBA (Self-Contained Breathing Apparatus)\n---\n### Visual Systems\n• Thermal Imaging Camera (TIC)\n• Fire Hoses (1.75\" and 2.5\")",
+                "Fire Suppress": "• Class A: Ordinary combustibles (Water, Foam)\n• Class B: Flammable liquids (CO2, Dry Chemical)\n---\n### Specialty Responses\n• Class C: Electrical fires (Turn off power, CO2)\n• Class D: Combustible metals (Special Dry Powder)",
+                "Hazmat": "• Zone Setup: Hot Zone (Exclusion), Warm Zone (Decon), Cold Zone (Command).\n---\n### References\n• Consult ERG (Emergency Response Guidebook) for identification placards."
+            },
+            LEO: {
+                "Equipment": "• Duty Belt & Holster\n• Body Worn Camera (BWC)\n---\n### Protective Wear\n• Ballistic Vest\n• Less-Lethal (Taser, OC Spray, Baton)",
+                "Miranda Rights": "\"You have the right to remain silent.\nAnything you say can and will be used against you in a court of law.\n---\n### Right to Counsel\nYou have the right to an attorney...\"",
+                "Codes": "• 10-4: Acknowledged\n• 10-7: Out of Service\n• 10-8: In Service\n---\n### Emergency Dispatch\n• 10-20: Location\n• Code 3: Emergency Response (Lights & Sirens)"
+            }
+        };
+
+        let currentMain = 'EMS';
+        let currentTimezone = 'local';
+
+        function updateClock() {
+            const now = new Date();
+            const options = {
+                year: 'numeric', month: 'short', day: 'numeric',
+                hour: '2-digit', minute: '2-digit',
+                hour12: false
+            };
+            if (currentTimezone !== 'local') options.timeZone = currentTimezone;
+            document.getElementById('clock').innerText = new Intl.DateTimeFormat('en-US', options).format(now);
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        document.getElementById('timezone-select').addEventListener('change', (e) => {
+            currentTimezone = e.target.value;
+            updateClock();
+        });
+
+        function switchMainPage(category) {
+            currentMain = category;
+            ['EMS', 'Fire', 'LEO'].forEach(cat => {
+                document.getElementById(`btn-${cat}`).classList.toggle('active', cat === category);
+            });
+            renderSubNav();
+        }
+
+        function renderSubNav() {
+            const container = document.getElementById('sub-nav-container');
+            container.innerHTML = ''; 
+            const subpages = Object.keys(siteConfig[currentMain]);
+            subpages.forEach((subpage, index) => {
+                const li = document.createElement('li');
+                const btn = document.createElement('button');
+                btn.className = 'sub-nav-item';
+                btn.innerText = subpage;
+                btn.onclick = () => displayContent(subpage);
+                li.appendChild(btn);
+                container.appendChild(li);
+                if (index === 0) displayContent(subpage);
+            });
+        }
+
+        function displayContent(subpageKey) {
+            document.querySelectorAll('.sub-nav-item').forEach(btn => {
+                btn.classList.toggle('active', btn.innerText === subpageKey);
+            });
+
+            document.getElementById('content-title').innerText = `${currentMain} - ${subpageKey}`;
+            const rawText = siteConfig[currentMain][subpageKey];
+            const contentBody = document.getElementById('content-body');
+            contentBody.innerHTML = ''; 
+
+            const defaultHr = document.createElement('hr');
+            defaultHr.className = 'content-divider';
+            contentBody.appendChild(defaultHr);
+
+            const lines = rawText.split('\n');
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                if (trimmed === '---') {
+                    const hr = document.createElement('hr');
+                    hr.className = 'content-divider';
+                    contentBody.appendChild(hr);
+                } else if (trimmed.startsWith('### ')) {
+                    const subHeading = document.createElement('div');
+                    subHeading.className = 'content-subheading';
+                    subHeading.innerText = trimmed.replace('### ', '');
+                    contentBody.appendChild(subHeading);
+                } else {
+                    const div = document.createElement('div');
+                    div.className = 'content-line';
+                    let processedLine = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                    div.innerHTML = processedLine;
+                    contentBody.appendChild(div);
+                }
+            });
+        }
+        switchMainPage('EMS');
+    </script>
+</body>
+</html>
