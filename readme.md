@@ -18,3 +18,9 @@ LEO: {
     "Miranda Rights": "...",
     "Your New Subpage": "Put your text instructions or content guidelines here."
 }
+## How to add Dividers inside Subpages
+To break up a single subpage into clean, structured sections, just type `---` on a line by itself anywhere in your text. 
+
+Example configuration style:
+```javascript
+"Your Subpage": "This is section one text.\n• Item A\n---\nThis text appears below the divider line.\n• Item B"
