@@ -155,7 +155,19 @@
         main content {
             font-size: 16px;
             line-height: 1.6;
-            white-space: pre-wrap; /* Preserves formatting from JSON formatting */
+        }
+
+        /* Divider lines inside content segments */
+        .content-line {
+            margin-bottom: 4px;
+            white-space: pre-wrap;
+        }
+        
+        .content-divider {
+            border: 0;
+            border-top: 1px solid var(--border-color);
+            margin: 20px 0;
+            width: 100%;
         }
     </style>
 </head>
@@ -194,22 +206,22 @@
 
     <script>
         // --- EASY TO EDIT CONFIGURATION ---
-        // Just add or modify keys/text here to add subpages instantly.
+        // Type --- on its own line anywhere to create a horizontal divider line.
         const siteConfig = {
             EMS: {
-                "Equipment": "• Jump Bag\n• Defibrillator (AED)\n• Portable Oxygen\n• Stretcher & Cervical Collars",
-                "Bleeding Control": "1. Apply direct pressure with sterile dressing.\n2. If bleeding continues, apply a tourniquet high and tight.\n3. Pack deep wounds with hemostatic gauze.\n4. Keep patient warm and monitor for shock.",
-                "Dosages": "• Epinephrine (1:1,000): 0.3mg IM for Anaphylaxis\n• Naloxone (Narcan): 2mg Intranasal for Opioid Overdose\n• Aspirin: 324mg chewed for Chest Pain\n• Albuterol: 2.5mg via Nebulizer for Asthma"
+                "Equipment": "• Jump Bag\n• Defibrillator (AED)\n---\n• Portable Oxygen\n• Stretcher & Cervical Collars",
+                "Bleeding Control": "1. Apply direct pressure with sterile dressing.\n2. If bleeding continues, apply a tourniquet high and tight.\n---\n3. Pack deep wounds with hemostatic gauze.\n4. Keep patient warm and monitor for shock.",
+                "Dosages": "• Epinephrine (1:1,000): 0.3mg IM for Anaphylaxis\n• Naloxone (Narcan): 2mg Intranasal for Opioid Overdose\n---\n• Aspirin: 324mg chewed for Chest Pain\n• Albuterol: 2.5mg via Nebulizer for Asthma"
             },
             Fire: {
-                "Equipment": "• Halligan Bar & Axe\n• SCBA (Self-Contained Breathing Apparatus)\n• Thermal Imaging Camera (TIC)\n• Fire Hoses (1.75\" and 2.5\")",
-                "Fire Suppress": "• Class A: Ordinary combustibles (Water, Foam)\n• Class B: Flammable liquids (CO2, Dry Chemical)\n• Class C: Electrical fires (Turn off power, CO2)\n• Class D: Combustible metals (Special Dry Powder)",
-                "Hazmat": "• Zone Setup: Hot Zone (Exclusion), Warm Zone (Decon), Cold Zone (Command).\n• Consult ERG (Emergency Response Guidebook) for identification placards."
+                "Equipment": "• Halligan Bar & Axe\n• SCBA (Self-Contained Breathing Apparatus)\n---\n• Thermal Imaging Camera (TIC)\n• Fire Hoses (1.75\" and 2.5\")",
+                "Fire Suppress": "• Class A: Ordinary combustibles (Water, Foam)\n• Class B: Flammable liquids (CO2, Dry Chemical)\n---\n• Class C: Electrical fires (Turn off power, CO2)\n• Class D: Combustible metals (Special Dry Powder)",
+                "Hazmat": "• Zone Setup: Hot Zone (Exclusion), Warm Zone (Decon), Cold Zone (Command).\n---\n• Consult ERG (Emergency Response Guidebook) for identification placards."
             },
             LEO: {
-                "Equipment": "• Duty Belt & Holster\n• Body Worn Camera (BWC)\n• Ballistic Vest\n• Less-Lethal (Taser, OC Spray, Baton)",
-                "Miranda Rights": "\"You have the right to remain silent. Anything you say can and will be used against you in a court of law. You have the right to an attorney...\"",
-                "Codes": "• 10-4: Acknowledged\n• 10-7: Out of Service\n• 10-8: In Service\n• 10-20: Location\n• Code 3: Emergency Response (Lights & Sirens)"
+                "Equipment": "• Duty Belt & Holster\n• Body Worn Camera (BWC)\n---\n• Ballistic Vest\n• Less-Lethal (Taser, OC Spray, Baton)",
+                "Miranda Rights": "\"You have the right to remain silent.\nAnything you say can and will be used against you in a court of law.\n---\nYou have the right to an attorney...\"",
+                "Codes": "• 10-4: Acknowledged\n• 10-7: Out of Service\n• 10-8: In Service\n---\n• 10-20: Location\n• Code 3: Emergency Response (Lights & Sirens)"
             }
         };
 
@@ -264,7 +276,7 @@
 
         function renderSubNav() {
             const container = document.getElementById('sub-nav-container');
-            container.innerHTML = ''; // Clear old items
+            container.innerHTML = ''; 
             
             const subpages = Object.keys(siteConfig[currentMain]);
             
@@ -278,7 +290,6 @@
                 li.appendChild(btn);
                 container.appendChild(li);
 
-                // Default auto-load the first subpage
                 if (index === 0) {
                     displayContent(subpage);
                 }
@@ -286,14 +297,30 @@
         }
 
         function displayContent(subpageKey) {
-            // Remove active classes from sub-nav items
             document.querySelectorAll('.sub-nav-item').forEach(btn => {
                 btn.classList.toggle('active', btn.innerText === subpageKey);
             });
 
-            // Render Content
             document.getElementById('content-title').innerText = `${currentMain} - ${subpageKey}`;
-            document.getElementById('content-body').innerText = siteConfig[currentMain][subpageKey];
+            
+            const rawText = siteConfig[currentMain][subpageKey];
+            const contentBody = document.getElementById('content-body');
+            contentBody.innerHTML = ''; // Clear previous elements
+
+            // Split content line by line to locate dividers
+            const lines = rawText.split('\n');
+            lines.forEach(line => {
+                if (line.trim() === '---') {
+                    const hr = document.createElement('hr');
+                    hr.className = 'content-divider';
+                    contentBody.appendChild(hr);
+                } else {
+                    const div = document.createElement('div');
+                    div.className = 'content-line';
+                    div.innerText = line;
+                    contentBody.appendChild(div);
+                }
+            });
         }
 
         // Initialize App on load
