@@ -24,3 +24,13 @@ To break up a single subpage into clean, structured sections, just type `---` on
 Example configuration style:
 ```javascript
 "Your Subpage": "This is section one text.\n• Item A\n---\nThis text appears below the divider line.\n• Item B"
+
+## Subheadings & Formatting Layout Rules
+
+1. **Auto-Header Divider**: The application automatically places a master divider line right beneath the tab title (`EMS - Equipment`), you don't need to manually type one at the top.
+2. **Adding Section Dividers**: Place three dashes (`---`) on its own line to slice content categories.
+3. **Adding Subheadings**: Directly below a custom divider (or anywhere in text), type `### ` followed by your heading title.
+
+Example Syntax:
+```javascript
+"Subpage Title": "Standard information string goes here.\n---\n### Your Subheading Title\n• Next section details."
