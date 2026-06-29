@@ -320,7 +320,8 @@
                 } else {
                     const div = document.createElement('div');
                     div.className = 'content-line';
-                    div.innerText = line;
+                    let processedLine = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                    div.innerHTML = processedLine;
                     contentBody.appendChild(div);
                 }
             });
