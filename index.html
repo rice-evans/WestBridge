@@ -6,12 +6,12 @@
     <title>Roleplay Assistant</title>
     <style>
         :root {
-            /* 1. Slightly increased background opacity (from 0.06 to 0.12) to compensate for less blur */
-            --glass-bg: rgba(255, 255, 255, 0.12);
-            --glass-bg-hover: rgba(255, 255, 255, 0.18);
-            --glass-bg-active: rgba(255, 255, 255, 0.24);
-            --glass-border: rgba(255, 255, 255, 0.2);
-            --glass-border-glow: rgba(255, 255, 255, 0.4);
+            /* Increased opacity from 0.12 to 0.18 so text pops against the sharper background */
+            --glass-bg: rgba(255, 255, 255, 0.18);
+            --glass-bg-hover: rgba(255, 255, 255, 0.24);
+            --glass-bg-active: rgba(255, 255, 255, 0.30);
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --glass-border-glow: rgba(255, 255, 255, 0.5);
             --text-color: #ffffff;
             --radius: 20px;
             --radius-sm: 10px;
@@ -22,9 +22,9 @@
 
         .glass-panel {
             background: var(--glass-bg);
-            /* 2. Reduced blur from 20px down to 6px for a cleaner look */
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
+            /* Dropped blur from 6px down to 2px for maximum clarity */
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
             border: 1px solid var(--glass-border);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         }
